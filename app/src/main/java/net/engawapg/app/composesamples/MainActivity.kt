@@ -28,6 +28,7 @@ val sampleList = listOf(
     "dialog",
     "lifecycleEvent",
     "flow",
+    "statusBarColorOnScroll",
 )
 
 class MainActivity : ComponentActivity() {
@@ -58,6 +59,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("flow") {
                             FlowSample()
+                        }
+                        composable("statusBarColorOnScroll") {
+                            StatusBarColorOnScrollSample()
                         }
                     }
                 }
