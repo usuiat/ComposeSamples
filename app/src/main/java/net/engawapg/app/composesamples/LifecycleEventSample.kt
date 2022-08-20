@@ -27,11 +27,6 @@ fun LifecycleEventSample() {
     ObserveLifecycleEvent { event ->
         // 検出したイベントに応じた処理を実装する。
         Log.d("LifecycleEventSample", event.toString())
-//        when (event) {
-//            Lifecycle.Event.ON_RESUME -> Log.d("LifecycleEventSample", "On Resume")
-//            Lifecycle.Event.ON_PAUSE -> Log.d("LifecycleEventSample", "On Pause")
-//            else -> {}
-//        }
     }
 }
 
