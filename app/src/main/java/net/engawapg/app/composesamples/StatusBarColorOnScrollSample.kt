@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -15,10 +14,14 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatusBarColorOnScrollSample() {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarScrollState())
+    val topAppBarState = rememberTopAppBarState()
+    val colorTransitionFraction by remember {
+        derivedStateOf { topAppBarState.overlappedFraction }
+    }
     val statusBarColor = TopAppBarDefaults.centerAlignedTopAppBarColors()
-        .containerColor(scrollFraction = scrollBehavior.scrollFraction).value
+        .containerColor(colorTransitionFraction).value
     val systemUiController = rememberSystemUiController()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
 
     SideEffect {
         systemUiController.setStatusBarColor(statusBarColor)
@@ -33,9 +36,7 @@ fun StatusBarColorOnScrollSample() {
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            contentPadding = paddingValues,
-        ) {
+        LazyColumn(contentPadding = paddingValues) {
             items(100) { count ->
                 Text(
                     text = "Item ${count + 1}",
