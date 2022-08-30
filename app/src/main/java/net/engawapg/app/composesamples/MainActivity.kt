@@ -1,6 +1,8 @@
 package net.engawapg.app.composesamples
 
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -29,11 +31,19 @@ val sampleList = listOf(
     "lifecycleEvent",
     "flow",
     "statusBarColorOnScroll",
+    "fullScreen",
 )
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /* フルスクリーン時にカメラホールの周りにも描画するため */
+        if (Build.VERSION.SDK_INT >= 28) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+
         setContent {
             ComposeSamplesTheme {
                 // A surface container using the 'background' color from the theme
@@ -48,21 +58,12 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(sample)
                             }
                         }
-                        composable("icons") {
-                            IconSample()
-                        }
-                        composable("dialog") {
-                            DialogSample()
-                        }
-                        composable("lifecycleEvent") {
-                            LifecycleEventSample()
-                        }
-                        composable("flow") {
-                            FlowSample()
-                        }
-                        composable("statusBarColorOnScroll") {
-                            StatusBarColorOnScrollSample()
-                        }
+                        composable("icons") { IconSample() }
+                        composable("dialog") { DialogSample() }
+                        composable("lifecycleEvent") { LifecycleEventSample() }
+                        composable("flow") { FlowSample() }
+                        composable("statusBarColorOnScroll") { StatusBarColorOnScrollSample() }
+                        composable("fullScreen") { FullScreenSample() }
                     }
                 }
             }
