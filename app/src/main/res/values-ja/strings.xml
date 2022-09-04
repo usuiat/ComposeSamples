@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ComposeSamples</string>
+    <string name="title_material_icons">マテリアルアイコンを表示したい</string>
+    <string name="title_dialog">ダイアログを表示したい</string>
+    <string name="title_lifecycle_event">onResumeやonPauseの処理を書きたい</string>
+    <string name="title_flow">Flowサンプル</string>
+    <string name="title_status_bar_on_scroll">TopAppBarとStatusBarの色をスクロールに合わせて変化させたい</string>
+    <string name="title_full_screen">フルスクリーン表示したい</string>
+</resources>

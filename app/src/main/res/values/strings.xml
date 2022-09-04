@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ComposeSamples</string>
+    <string name="title_material_icons">Material icons</string>
+    <string name="title_dialog">Dialog</string>
+    <string name="title_lifecycle_event">Implement onResume and onPause</string>
+    <string name="title_flow">Flow</string>
+    <string name="title_status_bar_on_scroll">Change the colors of TopAppBar and StatusBar in sync with scroll</string>
+    <string name="title_full_screen">Full screen</string>
 </resources>

@@ -17,21 +17,56 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.engawapg.app.composesamples.ui.theme.ComposeSamplesTheme
 
+@Stable
+data class Sample(
+    val route: String,
+    val titleResource: Int,
+) {
+    companion object {
+        val MaterialIcons = Sample(
+            route = "materialIcons",
+            titleResource = R.string.title_material_icons,
+        )
+        val Dialog = Sample(
+            route = "dialog",
+            titleResource = R.string.title_dialog,
+        )
+        val LifecycleEvent = Sample(
+            route = "lifecycleEvent",
+            titleResource = R.string.title_lifecycle_event
+        )
+        val Flow = Sample(
+            route = "flow",
+            titleResource = R.string.title_flow
+        )
+        val StatusBarColorOnScroll = Sample(
+            route = "statusBarColorOnScroll",
+            titleResource = R.string.title_status_bar_on_scroll
+        )
+        val FullScreen = Sample(
+            route = "fullScreen",
+            titleResource = R.string.title_full_screen
+        )
+    }
+}
+
 val sampleList = listOf(
-    "icons",
-    "dialog",
-    "lifecycleEvent",
-    "flow",
-    "statusBarColorOnScroll",
-    "fullScreen",
+    Sample.MaterialIcons,
+    Sample.Dialog,
+    Sample.LifecycleEvent,
+    Sample.Flow,
+    Sample.StatusBarColorOnScroll,
+    Sample.FullScreen,
 )
 
 class MainActivity : ComponentActivity() {
@@ -58,12 +93,12 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(sample)
                             }
                         }
-                        composable("icons") { IconSample() }
-                        composable("dialog") { DialogSample() }
-                        composable("lifecycleEvent") { LifecycleEventSample() }
-                        composable("flow") { FlowSample() }
-                        composable("statusBarColorOnScroll") { StatusBarColorOnScrollSample() }
-                        composable("fullScreen") { FullScreenSample() }
+                        composable(Sample.MaterialIcons.route) { IconSample() }
+                        composable(Sample.Dialog.route) { DialogSample() }
+                        composable(Sample.LifecycleEvent.route) { LifecycleEventSample() }
+                        composable(Sample.Flow.route) { FlowSample() }
+                        composable(Sample.StatusBarColorOnScroll.route) { StatusBarColorOnScrollSample() }
+                        composable(Sample.FullScreen.route) { FullScreenSample() }
                     }
                 }
             }
@@ -72,7 +107,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Samples(samples: List<String> = sampleList, onSelectSample: (String)->Unit) {
+fun Samples(samples: List<Sample> = sampleList, onSelectSample: (String)->Unit) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(2.dp),
         modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
@@ -84,10 +119,10 @@ fun Samples(samples: List<String> = sampleList, onSelectSample: (String)->Unit) 
                     .fillParentMaxWidth()
                     .height(80.dp)
                     .background(MaterialTheme.colorScheme.surface)
-                    .clickable { onSelectSample(sample) }
+                    .clickable { onSelectSample(sample.route) }
             ) {
                 Text(
-                    text = sample,
+                    text = stringResource(id = sample.titleResource),
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
