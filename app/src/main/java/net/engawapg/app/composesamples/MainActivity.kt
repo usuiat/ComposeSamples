@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -23,31 +24,38 @@ import net.engawapg.app.composesamples.ui.theme.ComposeSamplesTheme
 data class Sample(
     val route: String,
     val titleResource: Int,
+    val content: @Composable (NavBackStackEntry) -> Unit,
 ) {
     companion object {
         val MaterialIcons = Sample(
             route = "materialIcons",
             titleResource = R.string.title_material_icons,
+            content = { IconSample() },
         )
         val Dialog = Sample(
             route = "dialog",
             titleResource = R.string.title_dialog,
+            content = { DialogSample() },
         )
         val LifecycleEvent = Sample(
             route = "lifecycleEvent",
-            titleResource = R.string.title_lifecycle_event
+            titleResource = R.string.title_lifecycle_event,
+            content = { LifecycleEventSample() },
         )
         val Flow = Sample(
             route = "flow",
-            titleResource = R.string.title_flow
+            titleResource = R.string.title_flow,
+            content = { FlowSample() },
         )
         val StatusBarColorOnScroll = Sample(
             route = "statusBarColorOnScroll",
-            titleResource = R.string.title_status_bar_on_scroll
+            titleResource = R.string.title_status_bar_on_scroll,
+            content = { StatusBarColorOnScrollSample() },
         )
         val FullScreen = Sample(
             route = "fullScreen",
-            titleResource = R.string.title_full_screen
+            titleResource = R.string.title_full_screen,
+            content = { FullScreenSample() },
         )
     }
 }
@@ -85,12 +93,12 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(sample)
                             }
                         }
-                        composable(Sample.MaterialIcons.route) { IconSample() }
-                        composable(Sample.Dialog.route) { DialogSample() }
-                        composable(Sample.LifecycleEvent.route) { LifecycleEventSample() }
-                        composable(Sample.Flow.route) { FlowSample() }
-                        composable(Sample.StatusBarColorOnScroll.route) { StatusBarColorOnScrollSample() }
-                        composable(Sample.FullScreen.route) { FullScreenSample() }
+                        sampleList.forEach { sample ->
+                            composable(
+                                route = sample.route,
+                                content = sample.content,
+                            )
+                        }
                     }
                 }
             }
