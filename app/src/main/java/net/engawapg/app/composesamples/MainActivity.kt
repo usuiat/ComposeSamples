@@ -57,15 +57,21 @@ data class Sample(
             titleResource = R.string.title_full_screen,
             content = { FullScreenSample() },
         )
+        val StatusBarColor = Sample(
+            route = "statusBarColor",
+            titleResource = R.string.title_status_bar_color,
+            content = { StatusBarColorSample() },
+        )
     }
 }
 
 val sampleList = listOf(
+    Sample.StatusBarColor,
+    Sample.StatusBarColorOnScroll,
     Sample.MaterialIcons,
     Sample.Dialog,
     Sample.LifecycleEvent,
     Sample.Flow,
-    Sample.StatusBarColorOnScroll,
     Sample.FullScreen,
 )
 
