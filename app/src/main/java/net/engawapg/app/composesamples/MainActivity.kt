@@ -62,6 +62,11 @@ data class Sample(
             titleResource = R.string.title_status_bar_color,
             content = { StatusBarColorSample() },
         )
+        val NoRippleEffect = Sample(
+            route = "noRippleEffect",
+            titleResource = R.string.title_no_ripple_effect,
+            content = { NoRippleEffectSample() },
+        )
     }
 }
 
@@ -73,6 +78,7 @@ val sampleList = listOf(
     Sample.LifecycleEvent,
     Sample.Flow,
     Sample.FullScreen,
+    Sample.NoRippleEffect,
 )
 
 class MainActivity : ComponentActivity() {

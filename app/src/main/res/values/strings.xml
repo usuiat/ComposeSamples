@@ -7,4 +7,5 @@
     <string name="title_status_bar_on_scroll">Change the colors of TopAppBar and StatusBar in sync with scroll</string>
     <string name="title_full_screen">Full screen</string>
     <string name="title_status_bar_color">Change the StatusBar color</string>
+    <string name="title_no_ripple_effect">Disable onClick ripple effect</string>
 </resources>
