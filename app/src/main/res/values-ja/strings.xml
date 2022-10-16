@@ -9,4 +9,5 @@
     <string name="title_full_screen">フルスクリーン表示したい</string>
     <string name="title_status_bar_color">StatusBarの色を変更したい</string>
     <string name="title_no_ripple_effect">onClickのrippleエフェクトを止めたい</string>
+    <string name="title_create_remember_function">remember関数を作る</string>
 </resources>

@@ -67,6 +67,11 @@ data class Sample(
             titleResource = R.string.title_no_ripple_effect,
             content = { NoRippleEffectSample() },
         )
+        val CreateRememberFunction = Sample(
+            route = "createRememberFunction",
+            titleResource = R.string.title_create_remember_function,
+            content = { MyRememberFunctionSample() },
+        )
     }
 }
 
@@ -79,6 +84,7 @@ val sampleList = listOf(
     Sample.Flow,
     Sample.FullScreen,
     Sample.NoRippleEffect,
+    Sample.CreateRememberFunction,
 )
 
 class MainActivity : ComponentActivity() {
