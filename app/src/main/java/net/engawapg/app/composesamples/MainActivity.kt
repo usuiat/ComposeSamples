@@ -6,7 +6,10 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -14,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -91,6 +95,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        /* StatusBarやNavigationBarの裏側にも描画する */
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         /* フルスクリーン時にカメラホールの周りにも描画するため */
         if (Build.VERSION.SDK_INT >= 28) {
             window.attributes.layoutInDisplayCutoutMode =
@@ -127,7 +134,9 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Samples(samples: List<Sample> = sampleList, onSelectSample: (String)->Unit) {
-    LazyColumn {
+    LazyColumn(
+        contentPadding = WindowInsets.safeDrawing.asPaddingValues()
+    ) {
         items(samples) { sample ->
             ListItem(
                 headlineText = { Text(stringResource(id = sample.titleResource)) },

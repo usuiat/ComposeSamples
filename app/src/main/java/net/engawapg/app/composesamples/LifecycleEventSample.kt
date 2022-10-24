@@ -3,6 +3,7 @@ package net.engawapg.app.composesamples
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -23,6 +24,7 @@ fun LifecycleEventSample() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(50.dp)
+            .statusBarsPadding()
     )
     ObserveLifecycleEvent { event ->
         // 検出したイベントに応じた処理を実装する。

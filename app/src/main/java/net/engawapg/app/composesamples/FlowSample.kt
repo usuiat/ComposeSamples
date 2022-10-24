@@ -2,6 +2,7 @@ package net.engawapg.app.composesamples
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,6 +55,6 @@ fun FlowSample(viewModel: FlowViewModel = viewModel()) {
         text = text,
         fontSize = 30.sp,
         textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth().padding(50.dp)
+        modifier = Modifier.fillMaxWidth().padding(50.dp).statusBarsPadding(),
     )
 }

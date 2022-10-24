@@ -17,7 +17,7 @@ fun DialogSample() {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().statusBarsPadding(),
     ) {
         Button(
             onClick = { showDialog = true },

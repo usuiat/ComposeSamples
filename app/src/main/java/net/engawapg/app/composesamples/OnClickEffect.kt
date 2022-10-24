@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 fun NoRippleEffectSample() {
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier.fillMaxSize().padding(20.dp)
+        modifier = Modifier.fillMaxSize().padding(20.dp).statusBarsPadding(),
     ) {
         var text1 by remember { mutableStateOf("Click me") }
         var text2 by remember { mutableStateOf("Click me") }
