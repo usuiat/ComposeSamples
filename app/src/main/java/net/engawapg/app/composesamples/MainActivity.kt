@@ -76,6 +76,11 @@ data class Sample(
             titleResource = R.string.title_create_remember_function,
             content = { MyRememberFunctionSample() },
         )
+        val ZoomImage = Sample(
+            route = "zoomImage",
+            titleResource = R.string.title_zoom_image,
+            content = { ZoomImageSample() },
+        )
     }
 }
 
@@ -89,6 +94,7 @@ val sampleList = listOf(
     Sample.FullScreen,
     Sample.NoRippleEffect,
     Sample.CreateRememberFunction,
+    Sample.ZoomImage,
 )
 
 class MainActivity : ComponentActivity() {
