@@ -7,9 +7,11 @@ import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
@@ -20,6 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.lang.Float.max
@@ -28,7 +33,7 @@ import kotlin.math.abs
 
 suspend fun PointerInputScope.detectTransformGestures(
     panZoomLock: Boolean = false,
-    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float, timeMillis: Long) -> Unit,
+    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float, timeMillis: Long) -> Boolean,
     onGestureStart: () -> Unit = {},
     onGestureEnd: () -> Unit = {},
 ) {
@@ -77,11 +82,19 @@ suspend fun PointerInputScope.detectTransformGestures(
                             zoomChange != 1f ||
                             panChange != Offset.Zero
                         ) {
-                            onGesture(centroid, panChange, zoomChange, effectiveRotation, event.changes[0].uptimeMillis)
-                        }
-                        event.changes.fastForEach {
-                            if (it.positionChanged()) {
-                                it.consume()
+                            val isConsumed = onGesture(
+                                centroid,
+                                panChange,
+                                zoomChange,
+                                effectiveRotation,
+                                event.changes[0].uptimeMillis
+                            )
+                            if (isConsumed) {
+                                event.changes.fastForEach {
+                                    if (it.positionChanged()) {
+                                        it.consume()
+                                    }
+                                }
                             }
                         }
                     }
@@ -134,6 +147,45 @@ class ZoomState(private val maxScale: Float) {
             imageSize * (layoutSize.width / imageSize.width)
         } else {
             imageSize * (layoutSize.height / imageSize.height)
+        }
+    }
+
+    suspend fun reset() = coroutineScope {
+        launch { _scale.snapTo(1f) }
+        _offsetX.updateBounds(0f, 0f)
+        launch { _offsetX.snapTo(0f) }
+        _offsetY.updateBounds(0f, 0f)
+        launch { _offsetY.snapTo(0f) }
+    }
+
+    private var shouldConsumeEvent: Boolean? = null
+
+    fun startGesture() {
+        shouldConsumeEvent = null
+    }
+
+    fun canConsumeGesture(pan: Offset, zoom: Float): Boolean {
+        return shouldConsumeEvent ?: run {
+            var consume = true
+            if (zoom == 1f) { // One finger gesture
+                if (scale == 1f) {  // Not zoomed
+                    consume = false
+                } else {
+                    val ratio = (abs(pan.x) / abs(pan.y))
+                    if (ratio > 3) {   // Horizontal drag
+                        if ((pan.x < 0) && (_offsetX.value == _offsetX.lowerBound)) {
+                            // Drag R to L when right edge of the content is shown.
+                            consume = false
+                        }
+                        if ((pan.x > 0) && (_offsetX.value == _offsetX.upperBound)) {
+                            // Drag L to R when left edge of the content is shown.
+                            consume = false
+                        }
+                    }
+                }
+            }
+            shouldConsumeEvent = consume
+            consume
         }
     }
 
@@ -194,32 +246,56 @@ class ZoomState(private val maxScale: Float) {
 @Composable
 fun rememberZoomState(maxScale: Float) = remember { ZoomState(maxScale) }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ZoomImageSample() {
-    val painter = painterResource(id = R.drawable.bird)
+fun ZoomImageSampleOnPager() {
+    val resources = listOf(R.drawable.bird, R.drawable.bird2, R.drawable.bird3)
+    HorizontalPager(count = resources.size) { page ->
+        val painter = painterResource(id = resources[page])
+        val isVisible by remember {
+            derivedStateOf {
+                val offset = calculateCurrentOffsetForPage(page)
+                (-1.0f < offset) and (offset < 1.0f)
+            }
+        }
+        ZoomImageSample(painter, isVisible)
+    }
+}
+
+@Composable
+fun ZoomImageSample(painter: Painter, isVisible: Boolean) {
     val zoomState = rememberZoomState(maxScale = 5f)
     zoomState.setImageSize(painter.intrinsicSize)
     val scope = rememberCoroutineScope()
+    LaunchedEffect(isVisible) {
+        zoomState.reset()
+    }
     Image(
         painter = painter,
         contentDescription = "Zoomable bird image",
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .fillMaxSize()
+            .clipToBounds()
             .onSizeChanged { size ->
                 zoomState.setLayoutSize(size.toSize())
             }
             .pointerInput(Unit) {
                 detectTransformGestures(
+                    onGestureStart = { zoomState.startGesture() },
                     onGesture = { centroid, pan, zoom, _, timeMillis ->
-                        scope.launch {
-                            zoomState.applyGesture(
-                                pan = pan,
-                                zoom = zoom,
-                                position = centroid,
-                                timeMillis = timeMillis,
-                            )
+                        val canConsume = zoomState.canConsumeGesture(pan = pan, zoom = zoom)
+                        if (canConsume) {
+                            scope.launch {
+                                zoomState.applyGesture(
+                                    pan = pan,
+                                    zoom = zoom,
+                                    position = centroid,
+                                    timeMillis = timeMillis,
+                                )
+                            }
                         }
+                        canConsume
                     },
                     onGestureEnd = {
                         scope.launch {

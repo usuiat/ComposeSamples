@@ -71,6 +71,7 @@ dependencies {
 
     // Accompanist
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.27.1'
+    implementation 'com.google.accompanist:accompanist-pager:0.27.1'
 
     // Theme.Material3
     implementation 'com.google.android.material:material:1.7.0'

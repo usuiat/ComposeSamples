@@ -79,7 +79,7 @@ data class Sample(
         val ZoomImage = Sample(
             route = "zoomImage",
             titleResource = R.string.title_zoom_image,
-            content = { ZoomImageSample() },
+            content = { ZoomImageSampleOnPager() },
         )
     }
 }
