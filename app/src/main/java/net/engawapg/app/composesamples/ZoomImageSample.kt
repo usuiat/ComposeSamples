@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -18,6 +19,7 @@ import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.util.fastAny
@@ -246,6 +248,49 @@ class ZoomState(private val maxScale: Float) {
 @Composable
 fun rememberZoomState(maxScale: Float) = remember { ZoomState(maxScale) }
 
+fun Modifier.zoomable(zoomState: ZoomState): Modifier = composed(
+    inspectorInfo = debugInspectorInfo {
+        name = "zoomable"
+        properties["zoomState"] = zoomState
+    }
+) {
+    val scope = rememberCoroutineScope()
+    Modifier
+        .onSizeChanged { size ->
+            zoomState.setLayoutSize(size.toSize())
+        }
+        .pointerInput(Unit) {
+            detectTransformGestures(
+                onGestureStart = { zoomState.startGesture() },
+                onGesture = { centroid, pan, zoom, _, timeMillis ->
+                    val canConsume = zoomState.canConsumeGesture(pan = pan, zoom = zoom)
+                    if (canConsume) {
+                        scope.launch {
+                            zoomState.applyGesture(
+                                pan = pan,
+                                zoom = zoom,
+                                position = centroid,
+                                timeMillis = timeMillis,
+                            )
+                        }
+                    }
+                    canConsume
+                },
+                onGestureEnd = {
+                    scope.launch {
+                        zoomState.endGesture()
+                    }
+                }
+            )
+        }
+        .graphicsLayer {
+            scaleX = zoomState.scale
+            scaleY = zoomState.scale
+            translationX = zoomState.offsetX
+            translationY = zoomState.offsetY
+        }
+}
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ZoomImageSampleOnPager() {
@@ -266,7 +311,6 @@ fun ZoomImageSampleOnPager() {
 fun ZoomImageSample(painter: Painter, isVisible: Boolean) {
     val zoomState = rememberZoomState(maxScale = 5f)
     zoomState.setImageSize(painter.intrinsicSize)
-    val scope = rememberCoroutineScope()
     LaunchedEffect(isVisible) {
         zoomState.reset()
     }
@@ -277,38 +321,6 @@ fun ZoomImageSample(painter: Painter, isVisible: Boolean) {
         modifier = Modifier
             .fillMaxSize()
             .clipToBounds()
-            .onSizeChanged { size ->
-                zoomState.setLayoutSize(size.toSize())
-            }
-            .pointerInput(Unit) {
-                detectTransformGestures(
-                    onGestureStart = { zoomState.startGesture() },
-                    onGesture = { centroid, pan, zoom, _, timeMillis ->
-                        val canConsume = zoomState.canConsumeGesture(pan = pan, zoom = zoom)
-                        if (canConsume) {
-                            scope.launch {
-                                zoomState.applyGesture(
-                                    pan = pan,
-                                    zoom = zoom,
-                                    position = centroid,
-                                    timeMillis = timeMillis,
-                                )
-                            }
-                        }
-                        canConsume
-                    },
-                    onGestureEnd = {
-                        scope.launch {
-                            zoomState.endGesture()
-                        }
-                    }
-                )
-            }
-            .graphicsLayer {
-                scaleX = zoomState.scale
-                scaleY = zoomState.scale
-                translationX = zoomState.offsetX
-                translationY = zoomState.offsetY
-            }
+            .zoomable(zoomState)
     )
 }
