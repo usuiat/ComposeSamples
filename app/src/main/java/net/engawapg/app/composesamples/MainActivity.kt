@@ -81,6 +81,11 @@ data class Sample(
             titleResource = R.string.title_zoom_image,
             content = { ZoomImageSampleOnPager() },
         )
+        val TimeBaseAnim = Sample(
+            route = "timeBaseAnim",
+            titleResource = R.string.title_time_base_anim,
+            content = { TimeBaseAnimSample() },
+        )
     }
 }
 
@@ -95,6 +100,7 @@ val sampleList = listOf(
     Sample.NoRippleEffect,
     Sample.CreateRememberFunction,
     Sample.ZoomImage,
+    Sample.TimeBaseAnim,
 )
 
 class MainActivity : ComponentActivity() {

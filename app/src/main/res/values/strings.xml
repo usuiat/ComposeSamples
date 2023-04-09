@@ -10,4 +10,5 @@
     <string name="title_no_ripple_effect">Disable onClick ripple effect</string>
     <string name="title_create_remember_function">Create Remember Function</string>
     <string name="title_zoom_image">Zoom image</string>
+    <string name="title_time_base_anim">Time-based Animation</string>
 </resources>

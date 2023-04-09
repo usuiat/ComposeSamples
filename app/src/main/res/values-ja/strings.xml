@@ -11,4 +11,5 @@
     <string name="title_no_ripple_effect">onClickのrippleエフェクトを止めたい</string>
     <string name="title_create_remember_function">remember関数を作る</string>
     <string name="title_zoom_image">画像をズームしたい</string>
+    <string name="title_time_base_anim">時刻ベースのアニメーション</string>
 </resources>
